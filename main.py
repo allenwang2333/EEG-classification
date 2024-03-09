@@ -1,21 +1,14 @@
 from config import FLAGS
 import numpy as np
 import torch
+from train import train, validate
 
-X_test = np.load("data/X_test.npy")
-y_test = np.load("data/y_test.npy")
-person_train_valid = np.load("data/person_train_valid.npy")
-X_train_valid = np.load("data/X_train_valid.npy")
-y_train_valid = np.load("data/y_train_valid.npy")
-person_test = np.load("data/person_test.npy")
+from data import MyEEGDataset, split_dataset
 
-print ('Training/Valid data shape: {}'.format(X_train_valid.shape))
-print ('Test data shape: {}'.format(X_test.shape))
-print ('Training/Valid target shape: {}'.format(y_train_valid.shape))
-print ('Test target shape: {}'.format(y_test.shape))
-print ('Person train/valid shape: {}'.format(person_train_valid.shape))
-print ('Person test shape: {}'.format(person_test.shape))
+# Load data
+train_val_dataset = MyEEGDataset(split='trainval', subject=0)
+test_dataset = MyEEGDataset(split='test', subject=0)
 
-# Data Preprocessing
-# Normalize data
-X_train_valid = torch.tensor(X_train_valid, dtype=torch.float32)
+train_dataset, val_dataset = split_dataset(train_val_dataset, split=0.8)
+
+

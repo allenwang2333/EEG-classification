@@ -1,8 +1,8 @@
-import torch.utils.data as data
+from torch.utils.data import Dataset, random_split
 import numpy as np
 import torch
 
-class MyEEGDataset(data.Dataset):
+class MyEEGDataset(Dataset):
     def __init__(self, root="data", split='trainval', subject=0):
         """
         set subject to -1 to load all data
@@ -14,7 +14,11 @@ class MyEEGDataset(data.Dataset):
         y_test = np.load(f'{root}/y_test.npy')
         person_train_valid = np.load(f'{root}/person_train_valid.npy').reshape(-1)
         person_test = np.load(f'{root}/person_test.npy').reshape(-1)
-        
+
+        # subtract 769 to make labels start from 0
+        y_train_valid -= 769
+        y_test -= 769
+
         if subject != -1:
             if split == 'trainval':
                 self.X = X_train_valid[subject == person_train_valid]
@@ -29,7 +33,7 @@ class MyEEGDataset(data.Dataset):
             else:
                 self.X = X_test
                 self.y = y_test
-        self.X = torch.tensor(self.X, dtype=torch.float32)
+        self.X = torch.tensor(self.X, dtype=torch.float32).unsqueeze(1)
         self.y = torch.tensor(self.y, dtype=torch.long)
 
     def __len__(self):
@@ -39,5 +43,5 @@ class MyEEGDataset(data.Dataset):
         return self.X[idx], self.y[idx]
     
 def split_dataset(dataset, split=0.8):
-    train_dataset, val_dataset = data.random_split(dataset, [split, 1-split])
+    train_dataset, val_dataset = random_split(dataset, [split, 1-split])
     return train_dataset, val_dataset

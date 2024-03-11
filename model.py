@@ -2,10 +2,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch
 
-class ResNet(nn.Module):
+# data shape is (B, 1, 22, 1000)
+
+class MiniResNet(nn.Module):
 
     def __init__(self, num_classes=100):
-        super(ResNet, self).__init__()
+        super(MiniResNet, self).__init__()
         self.in_channels = 16
         # Initial convolution
         self.conv1 = nn.Conv2d(1,
@@ -20,13 +22,9 @@ class ResNet(nn.Module):
 
         self.layer1 = nn.Sequential(ResidualBlock(32, 64, downsample=True), ResidualBlock(64, 128, downsample=True))
         self.layer2 = nn.Sequential(ResidualBlock(128, 256, downsample=True), ResidualBlock(256, 512, downsample=True))
-        # self.layer3 = nn.Sequential(ResidualBlock(128, 256, downsample=True), ResidualBlock(256, 256))
-        # self.layer4 = nn.Sequential(ResidualBlock(256, 512, downsample=True), ResidualBlock(512, 512))
         
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(512, 256)
-        self.lstm = nn.LSTM(256, 128, 2, batch_first=True)
-        self.fc2 = nn.Linear(128, num_classes)
+        self.fc = nn.Linear(512, 4)
 
 
     def forward(self, x):
@@ -44,13 +42,7 @@ class ResNet(nn.Module):
         x = self.avgpool(x)
         x = torch.flatten(x, 1)
         x = self.fc(x)
-
-        x = x.unsqueeze(0)
-        x, (hn, cn) = self.lstm(x)
-        x = self.fc2(x)
-        x = x.squeeze(0)
-        
-
+    
         return x
 
     
@@ -89,7 +81,7 @@ class ResidualBlock(nn.Module):
 
         return out
     
-
+# 100 epoch best
 class HybridCNNLSTMModel(nn.Module):
     def __init__(self):
         super(HybridCNNLSTMModel, self).__init__()
@@ -102,44 +94,120 @@ class HybridCNNLSTMModel(nn.Module):
         
         # Conv. block 2
         self.conv2 = nn.Conv2d(25, 50, kernel_size=(5, 5), padding=2)
-        self.pool2 = nn.MaxPool2d(kernel_size=(3, 1), stride=(3, 1), padding=(1,0))
+        self.pool2 = nn.AvgPool2d(kernel_size=(2, 1), stride=(2, 1), padding=(0,0))
         self.bn2 = nn.BatchNorm2d(50)
         self.dropout2 = nn.Dropout(0.6)
         
         # Conv. block 3
         self.conv3 = nn.Conv2d(50, 100, kernel_size=(5, 5), padding=2)
-        self.pool3 = nn.MaxPool2d(kernel_size=(3, 1), stride=(3, 1), padding=(1,0))
+        self.pool3 = nn.AvgPool2d(kernel_size=(2, 1), stride=(2, 1), padding=(0,0))
         self.bn3 = nn.BatchNorm2d(100)
         self.dropout3 = nn.Dropout(0.6)
         
         # Conv. block 4
         self.conv4 = nn.Conv2d(100, 200, kernel_size=(5, 5), padding=2)
-        self.pool4 = nn.MaxPool2d(kernel_size=(3, 1), stride=(3, 1), padding=(1,0))
+        self.pool4 = nn.AvgPool2d(kernel_size=(2, 1), stride=(2, 1), padding=(0,0))
         self.bn4 = nn.BatchNorm2d(200)
         self.dropout4 = nn.Dropout(0.6)
-        
-        # FC+LSTM layers
-        self.flatten = nn.Flatten()
-        self.fc1 = nn.Linear(57200, 40) # Adjust the input features according to your output shape after the last pooling
-        self.lstm = nn.LSTM(40, 10, batch_first=True, dropout=0.4)
+    
+        self.fc1 = nn.Linear(4400, 40) # Adjust the input features according to your output shape after the last pooling
+       
+        self.lstm = nn.LSTM(40, 40, 5, batch_first=True, dropout=0.6)
         
         # Output layer
-        self.fc2 = nn.Linear(10, 4)
+        self.fc2 = nn.Linear(40, 4)
         
     def forward(self, x):
+        x = x[:, :, :, :600]
+        x = x.transpose(-1, -2)
+        #print(x.shape)
+        
         # Apply conv blocks
         x = self.dropout1(F.elu(self.bn1(self.pool1(self.conv1(x)))))
         x = self.dropout2(F.elu(self.bn2(self.pool2(self.conv2(x)))))
         x = self.dropout3(F.elu(self.bn3(self.pool3(self.conv3(x)))))
         x = self.dropout4(F.elu(self.bn4(self.pool4(self.conv4(x)))))
-        
         # FC+LSTM
-        x = self.flatten(x)
+        x = x.permute(0, 2, 1, 3)
+        x = torch.flatten(x, 2)
         x = F.elu(self.fc1(x))
-        x = x.unsqueeze(1)
         x, (hn, cn) = self.lstm(x)
         x = hn[-1] # Use the last hidden state
         
         # Output layer
         x = self.fc2(x)
-        return F.softmax(x, dim=1)
+        return x
+
+class EEGNet(nn.Module):
+    def __init__(self, num_classes=4):
+        super(EEGNet, self).__init__()
+        self.firstconv = nn.Sequential(
+            nn.Conv2d(1, 16, kernel_size=(1, 51), stride=(1, 1), padding=(0, 25), bias=False),
+            nn.BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ELU(alpha=1.0),
+            nn.AvgPool2d(kernel_size=(1, 5), stride=(1, 10), padding=0),
+        )
+        self.depthwiseConv = nn.Sequential(
+            nn.Conv2d(16, 32, kernel_size=(4, 1), stride=(1, 1), groups=16, bias=False),
+            nn.BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ELU(alpha=1.0),
+            nn.AvgPool2d(kernel_size=(1, 5), stride=(1, 10), padding=0),
+        )
+        self.separableConv = nn.Sequential(
+            nn.Conv2d(32, 32, kernel_size=(1, 15), stride=(1, 1), padding=(0, 7), bias=False),
+            nn.BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ELU(alpha=1.0),
+            nn.AvgPool2d(kernel_size=(1, 5), stride=(1, 10), padding=0),
+        )
+        self.dropout = nn.Dropout(p=0.5, inplace=False)
+        self.flatten = nn.Flatten()
+        self.elu = nn.ELU(alpha=1.0)
+        self.fc1 = nn.Linear(608, 1024, bias=True)
+        self.fc2 = nn.Linear(1024, 512, bias=True)
+        self.fc3 = nn.Linear(512, 4, bias=True)
+
+    def forward(self, x):
+        x = x[:, :, :, :600]
+
+
+        x = self.firstconv(x)
+        x = self.depthwiseConv(x)
+        x = self.separableConv(x)
+        x = self.dropout(x)
+        x = self.flatten(x)
+        #k = x
+        # print(x.shape)
+        x = self.fc1(x)
+        x = self.elu(x)
+        x = self.fc2(x)
+        x = self.elu(x)
+        x = self.fc3(x)
+        return x
+
+
+
+class TransformerModel(nn.Module):
+    def __init__(self):
+        super(TransformerModel, self).__init__()
+        self.transformer_model = nn.Transformer(nhead=16, 
+                                                d_model=256,
+                                                num_encoder_layers=6, 
+                                                num_decoder_layers=6, 
+                                                dim_feedforward=512, 
+                                                dropout=0.7, 
+                                                activation='gelu')
+        self.fc1 = nn.Linear(22, 256)
+        self.fc2 = nn.Linear(256*600, 22)
+        self.fc3 = nn.Linear(22, 4)
+
+    def forward(self, x):
+        x = x.squeeze(1)[:, :, :600]
+        x = x.permute(0, 2, 1)
+        x = self.fc1(x)
+        x = F.gelu(x)
+        x = self.transformer_model(x, x)
+        x = torch.flatten(x, 1)
+        x = self.fc2(x)
+        x = F.gelu(x)
+        x = self.fc3(x)
+        return x

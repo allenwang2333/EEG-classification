@@ -5,11 +5,14 @@ def train(model, train_loader, val_loader, criterion, optimizer, num_epochs, dev
     model = model.to(device)
     train_loss_history = []
     val_loss_history = []
+
+    train_acc_history = []
+    val_acc_history = []
+
     for epoch in range(num_epochs):
         model.train()
         with tqdm(total=len(train_loader), desc=f'Epoch {epoch + 1}/{num_epochs}', position=0, leave=True) as pbar:
             train_loss = 0.0
-            counter = 0
             for inputs, labels in train_loader:
                 
                 inputs = inputs.to(device)
@@ -24,14 +27,19 @@ def train(model, train_loader, val_loader, criterion, optimizer, num_epochs, dev
                 pbar.update(1)
                 pbar.set_postfix(loss=loss.item())
                 train_loss += loss.item()
-                counter += 1
-            avg_train_loss = train_loss / counter
+ 
+            avg_train_loss = train_loss / len(train_loader)
+
         train_loss_history.append(avg_train_loss)
 
+        _, train_accuracy = evaluate(model, train_loader, criterion, device)
+        train_acc_history.append(train_accuracy)
+
         avg_loss, accuracy = evaluate(model, val_loader, criterion, device)
+        val_acc_history.append(accuracy)
         val_loss_history.append(avg_loss)
         print(f'Validation set: Average loss = {avg_loss:.4f}, Accuracy = {accuracy:.4f}')
-    return train_loss_history, val_loss_history
+    return train_loss_history, val_loss_history, train_acc_history, val_acc_history
 
 def evaluate(model, test_loader, criterion, device):
     model.eval()

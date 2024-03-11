@@ -33,7 +33,7 @@ class MyEEGDataset(Dataset):
             else:
                 self.X = X_test
                 self.y = y_test
-        self.X = torch.tensor(self.X, dtype=torch.float32).transpose(-1, -2).unsqueeze(1)
+        self.X = torch.tensor(self.X, dtype=torch.float32).unsqueeze(1)
         self.y = torch.tensor(self.y, dtype=torch.long)
 
     def __len__(self):

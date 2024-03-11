@@ -64,3 +64,34 @@ def evaluate(model, test_loader, criterion, device):
     accuracy = num_correct / num_samples
 
     return avg_loss, accuracy
+
+def evaluate_ensemble(models, test_loader, criterion, device):
+    ensemble_logits = []
+    
+    with torch.no_grad():
+        total_loss = 0.0
+        num_correct = 0
+        num_samples = 0
+
+        for inputs, labels in test_loader:
+            ensemble_logits = None
+            for model in models:
+                model.eval()
+                inputs = inputs.to(device)
+                labels = labels.to(device)
+
+                logits = model(inputs)
+                if ensemble_logits is None:
+                    ensemble_logits = logits
+                else:
+                    ensemble_logits += logits
+            ensemble_out = ensemble_logits / len(models)
+            loss = criterion(ensemble_out, labels)
+            total_loss += loss.item()
+            _, predictions = torch.max(logits, dim=1)
+            num_correct += (predictions == labels).sum().item()
+            num_samples += len(inputs)
+    avg_loss = total_loss / len(test_loader)
+    accuracy = num_correct / num_samples
+    return avg_loss, accuracy
+    

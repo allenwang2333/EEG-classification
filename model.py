@@ -424,3 +424,48 @@ class EEGMultiAttentionNet(nn.Module):
         x = self.fc3(x)
 
         return x
+    
+class EEGLSTMNet(nn.Module):
+    def __init__(self, num_classes=4):
+        super(EEGLSTMNet, self).__init__()
+        self.firstconv = nn.Sequential(
+            nn.Conv2d(1, 32, kernel_size=(1, 51), stride=(1, 1), padding=(0, 25), bias=True),
+            nn.BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ELU(alpha=1.0),
+            nn.AvgPool2d(kernel_size=(1, 5), stride=(1, 5), padding=0),
+        )
+        self.depthwiseConv = nn.Sequential(
+            nn.Conv2d(32, 32, kernel_size=(8, 1), stride=(1, 1), groups=16, bias=False),
+            nn.BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ELU(alpha=1.0),
+            nn.AvgPool2d(kernel_size=(1, 5), stride=(1, 5), padding=0),
+        )
+        self.separableConv = nn.Sequential(
+            nn.Conv2d(32, 64, kernel_size=(1, 15), stride=(1, 1), padding=(0, 7), bias=False),
+            nn.BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ELU(alpha=1.0),
+            nn.AvgPool2d(kernel_size=(1, 5), stride=(1, 5), padding=0),
+        )
+        self.dropout = nn.Dropout(p=0.6, inplace=False)
+        self.flatten = nn.Flatten()
+        self.elu = nn.ELU(alpha=1.0)
+        self.fc1 = nn.Linear(960, 512, bias=True)
+        self.lstm = nn.LSTM(512, 512, 5, batch_first=True, dropout=0.6)
+
+        self.fc2 = nn.Linear(512, 4, bias=True)
+
+    def forward(self, x):
+        x = x[:, :, :, 0:600]
+
+        x = self.firstconv(x)
+        x = self.depthwiseConv(x)
+        x = self.separableConv(x)
+        x = self.dropout(x)
+        x = x.permute(0, 3, 1, 2)
+        x = torch.flatten(x, 2)
+        x = self.fc1(x)
+        x = self.elu(x)
+        x, (hn, cn) = self.lstm(x)
+        x = hn[-1]
+        x = self.fc2(x)
+        return x

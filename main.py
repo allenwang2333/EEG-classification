@@ -24,7 +24,7 @@ test_loader = DataLoader(test_dataset, batch_size=FLAGS.batch_size, shuffle=Fals
 # model = ResNet(num_classes=4)
 # model_list = [EEGNet() for _ in range(5)]
 # for model in model_list:
-model = EEGMultiAttentionNet()
+model = EEGLSTMNet()
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.3)

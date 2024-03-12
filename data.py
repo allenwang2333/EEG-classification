@@ -42,6 +42,14 @@ class MyEEGDataset(Dataset):
     def __getitem__(self, idx):
         return self.X[idx], self.y[idx]
     
-def split_dataset(dataset, split=0.8):
+def split_dataset(dataset, split=0.8, dataaug = False):
     train_dataset, val_dataset = random_split(dataset, [split, 1-split])
+    if dataaug:
+        train_dataset = [[data_augmentation(x), y] for x, y in train_dataset]
     return train_dataset, val_dataset
+
+def data_augmentation(X):
+   #add noise
+    noise = 0.05 * torch.randn_like(X)
+    X = X + noise
+    return X

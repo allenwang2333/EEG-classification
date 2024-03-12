@@ -306,6 +306,7 @@ class EEGAttentionNet(nn.Module):
         self.fc1 = nn.Linear(4608, 512, bias=True)
         self.fc2 = nn.Linear(512, 512, bias=True)
         self.fc3 = nn.Linear(512, 4, bias=True)
+        
 
 
     def forward(self, x):
@@ -320,9 +321,102 @@ class EEGAttentionNet(nn.Module):
         k = self.k(x)
         q = self.q(x)
         v = self.v(x)
-        attention = torch.matmul(q, k.transpose(-2, -1))
+        attention = torch.matmul(q, k.transpose(-2, -1)) / torch.sqrt(torch.tensor(512.0))
         attention = F.softmax(attention, dim=-1)
         x = torch.matmul(attention, v)
+        x = self.layer_norm(x)
+        x = torch.flatten(x, 1)
+        x = self.fc1(x)
+        x = self.elu(x)
+        x = self.dropout(x)
+        x = self.fc2(x)
+        x = self.elu(x)
+        x = self.dropout(x)
+        x = self.fc3(x)
+
+        return x
+
+class MultiHeadAttention(nn.Module):
+    def __init__(self, embed_size, heads):
+        super(MultiHeadAttention, self).__init__()
+        self.embed_size = embed_size
+        self.heads = heads
+        self.head_dim = embed_size // heads
+
+        self.values = nn.Linear(self.head_dim, self.head_dim, bias=False)
+        self.keys = nn.Linear(self.head_dim, self.head_dim, bias=False)
+        self.queries = nn.Linear(self.head_dim, self.head_dim, bias=False)
+        self.fc_out = nn.Linear(heads * self.head_dim, embed_size)
+
+    def forward(self, value, key, query):
+        N = query.shape[0]
+        value_len, key_len, query_len = value.shape[1], key.shape[1], query.shape[1]
+
+        # Split the embedding into self.heads pieces
+        values = value.reshape(N, value_len, self.heads, self.head_dim)
+        keys = key.reshape(N, key_len, self.heads, self.head_dim)
+        queries = query.reshape(N, query_len, self.heads, self.head_dim)
+
+        values = self.values(values)
+        keys = self.keys(keys)
+        queries = self.queries(queries)
+
+        # Scaled dot-product attention
+        energy = torch.einsum("nqhd,nkhd->nhqk", [queries, keys])
+        attention = torch.softmax(energy / (self.embed_size ** (1 / 2)), dim=3)
+        out = torch.einsum("nhql,nlhd->nqhd", [attention, values]).reshape(
+            N, query_len, self.heads * self.head_dim
+        )
+
+        out = self.fc_out(out)
+        return out
+
+
+class EEGMultiAttentionNet(nn.Module):
+    def __init__(self, num_classes=4, embed_size=512, heads=8):
+        super(EEGMultiAttentionNet, self).__init__()
+        self.firstconv = nn.Sequential(
+            nn.Conv2d(1, 32, kernel_size=(1, 51), stride=(1, 1), padding=(0, 25), bias=True),
+            nn.BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ELU(alpha=1.0),
+            nn.AvgPool2d(kernel_size=(1, 4), stride=(1, 4), padding=0),
+        )
+        self.depthwiseConv = nn.Sequential(
+            nn.Conv2d(32, 32, kernel_size=(8, 1), stride=(1, 1), groups=16, bias=False),
+            nn.BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ELU(alpha=1.0),
+            nn.AvgPool2d(kernel_size=(1, 4), stride=(1, 4), padding=0),
+        )
+        self.separableConv = nn.Sequential(
+            nn.Conv2d(32, 64, kernel_size=(1, 15), stride=(1, 1), padding=(0, 7), bias=False),
+            nn.BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ELU(alpha=1.0),
+            nn.AvgPool2d(kernel_size=(1, 4), stride=(1, 4), padding=0),
+        )
+        self.dropout = nn.Dropout(p=0.6, inplace=False)
+        self.multihead_attention = MultiHeadAttention(embed_size, heads)
+        self.layer_norm = nn.LayerNorm(embed_size)
+        self.fc1 = nn.Linear(4608, 512, bias=True)
+        self.fc2 = nn.Linear(512, 512, bias=True)
+        self.fc3 = nn.Linear(512, 4, bias=True)
+        self.elu = nn.ELU(alpha=1.0)
+        self.k = nn.Linear(960, 512)
+        self.q = nn.Linear(960, 512)
+        self.v = nn.Linear(960, 512)
+
+    def forward(self, x):
+        x = x[:, :, :, 0:600]
+
+        x = self.firstconv(x)
+        x = self.depthwiseConv(x)
+        x = self.separableConv(x)
+        x = self.dropout(x)
+        x = x.permute(0, 3, 1, 2)  # Adjust dimensions as needed
+        x = torch.flatten(x, 2)
+        k = self.k(x)
+        q = self.q(x)
+        v = self.v(x)
+        x = self.multihead_attention(v, k, q)
         x = self.layer_norm(x)
         x = torch.flatten(x, 1)
         x = self.fc1(x)

@@ -15,7 +15,7 @@ np.random.seed(FLAGS.seed)
 train_val_dataset = MyEEGDataset(split='trainval', subject=-1)
 test_dataset = MyEEGDataset(split='test', subject=-1)
 
-train_dataset, val_dataset = split_dataset(train_val_dataset, split=0.8)
+train_dataset, val_dataset = split_dataset(train_val_dataset, split=0.8, dataaug = False)
 
 train_loader = DataLoader(train_dataset, batch_size=FLAGS.batch_size, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=FLAGS.batch_size, shuffle=True)
@@ -24,10 +24,10 @@ test_loader = DataLoader(test_dataset, batch_size=FLAGS.batch_size, shuffle=Fals
 # model = ResNet(num_classes=4)
 # model_list = [EEGNet() for _ in range(5)]
 # for model in model_list:
-model = EEGNet()
+model = EEGMultiAttentionNet()
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.3)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.3)
 _ , val_loss_history, train_acc_history, val_acc_history = train(model, train_loader, val_loader, criterion, optimizer, scheduler, FLAGS.epochs, FLAGS.device)
 
 # avg_loss, accuracy = evaluate_ensemble(model, test_loader, criterion, FLAGS.device)

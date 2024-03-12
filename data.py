@@ -49,7 +49,9 @@ def split_dataset(dataset, split=0.8, dataaug = False):
     return train_dataset, val_dataset
 
 def data_augmentation(X):
-   #add noise
+    #add noise
     noise = 0.05 * torch.randn_like(X)
     X = X + noise
+    #channel shuffle
+    X = X[:, torch.randperm(X.size(1))]
     return X

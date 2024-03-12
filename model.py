@@ -357,10 +357,6 @@ class MultiHeadAttention(nn.Module):
         keys = key.reshape(N, key_len, self.heads, self.head_dim)
         queries = query.reshape(N, query_len, self.heads, self.head_dim)
 
-        values = self.values(values)
-        keys = self.keys(keys)
-        queries = self.queries(queries)
-
         # Scaled dot-product attention
         energy = torch.einsum("nqhd,nkhd->nhqk", [queries, keys])
         attention = torch.softmax(energy / (self.embed_size ** (1 / 2)), dim=3)

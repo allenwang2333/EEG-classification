@@ -15,7 +15,7 @@ np.random.seed(FLAGS.seed)
 train_val_dataset = MyEEGDataset(split='trainval', subject=-1)
 test_dataset = MyEEGDataset(split='test', subject=-1)
 
-train_dataset, val_dataset = split_dataset(train_val_dataset, split=0.8, dataaug = False)
+train_dataset, val_dataset = split_dataset(train_val_dataset, split=0.8, dataaug = FLAGS.data_aug)
 
 train_loader = DataLoader(train_dataset, batch_size=FLAGS.batch_size, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=FLAGS.batch_size, shuffle=True)

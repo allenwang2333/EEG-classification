@@ -1,7 +1,7 @@
 import torch
 from tqdm import tqdm
 
-def train(model, train_loader, val_loader, criterion, optimizer, num_epochs, device):
+def train(model, train_loader, val_loader, criterion, optimizer, scheduler, num_epochs, device):
     model = model.to(device)
     train_loss_history = []
     val_loss_history = []
@@ -27,6 +27,8 @@ def train(model, train_loader, val_loader, criterion, optimizer, num_epochs, dev
                 pbar.update(1)
                 pbar.set_postfix(loss=loss.item())
                 train_loss += loss.item()
+            
+            scheduler.step()
  
             avg_train_loss = train_loss / len(train_loader)
 

@@ -170,7 +170,6 @@ class EEGNet(nn.Module):
     def forward(self, x):
         x = x[:, :, :, 0:600]
 
-
         x = self.firstconv(x)
         x = self.depthwiseConv(x)
         x = self.separableConv(x)
@@ -333,7 +332,5 @@ class EEGAttentionNet(nn.Module):
         x = self.elu(x)
         x = self.dropout(x)
         x = self.fc3(x)
-
-
 
         return x

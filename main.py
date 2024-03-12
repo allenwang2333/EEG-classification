@@ -22,20 +22,22 @@ val_loader = DataLoader(val_dataset, batch_size=FLAGS.batch_size, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=FLAGS.batch_size, shuffle=False)
 
 # model = ResNet(num_classes=4)
-model = EEGAttentionNet()
-print(model)
+# model_list = [EEGNet() for _ in range(5)]
+# for model in model_list:
+model = EEGNet()
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)
-#optimizer = torch.optim.SGD(model.parameters(), lr=FLAGS.lr, momentum=FLAGS.momentum)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.3)
+_ , val_loss_history, train_acc_history, val_acc_history = train(model, train_loader, val_loader, criterion, optimizer, scheduler, FLAGS.epochs, FLAGS.device)
 
+# avg_loss, accuracy = evaluate_ensemble(model, test_loader, criterion, FLAGS.device)
+avg_loss, accuracy = evaluate(model, test_loader, criterion, FLAGS.device)
+print(f'Test set: Average loss = {avg_loss:.4f}, Accuracy = {accuracy:.4f}')
 
-
-_ , val_loss_history, train_acc_history, val_acc_history = train(model, train_loader, val_loader, criterion, optimizer, FLAGS.epochs, FLAGS.device)
 x = np.arange(FLAGS.epochs)
 plt.plot(x, train_acc_history, label='train')
 plt.plot(x, val_acc_history, label='val')
 plt.legend()
 plt.show()
-avg_loss, accuracy = evaluate(model, test_loader, criterion, FLAGS.device)
-#avg_loss, accuracy = evaluate_ensemble(model_list, test_loader, criterion, FLAGS.device)
-print(f'Test set: Average loss = {avg_loss:.4f}, Accuracy = {accuracy:.4f}')
+
+# python main.py --device cuda --epoch 60 --batch_size 16

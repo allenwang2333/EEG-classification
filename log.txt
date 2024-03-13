@@ -8,8 +8,6 @@ eegnet --epoch 60 --batch_size 16 StepLR(optimizer, step_size=10, gamma=0.3)
     train on all subject, test on subject 0: 
         Validation set: Average loss = 1.6913, Accuracy = 0.6730
         Test set: Average loss = 1.1563, Accuracy = 0.7000
-    train on all subject, test on all subject:
-        Test set: Average loss = 1.8112, Accuracy = 0.7043 
 
 MultiAttention --epoch 90 --batch_size 128 StepLR(optimizer, step_size=30, gamma=0.5)
     train on all subject, test on all subject:
@@ -40,3 +38,8 @@ MiniResNet --epoch 30 --batch_size 128 StepLR(optimizer, step_size=30, gamma=0.3
     train on all subject, test on all subject:
         Validation set: Average loss = 2.5310, Accuracy = 0.2583
         Test set: Average loss = 2.3878, Accuracy = 0.2506
+
+RNNModel --epoch 40 --batch_size 128 StepLR(optimizer, step_size=10, gamma=0.3)
+    train on all subject test on all subject:
+        Validation set: Average loss = 1.5981, Accuracy = 0.2607
+        Test set: Average loss = 1.6974, Accuracy = 0.2257

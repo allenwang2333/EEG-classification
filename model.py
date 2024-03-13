@@ -469,3 +469,16 @@ class EEGLSTMNet(nn.Module):
         x = hn[-1]
         x = self.fc2(x)
         return x
+
+class RNNModel(nn.Module):
+    def __init__(self):
+        super(RNNModel, self).__init__()
+        self.rnn = nn.RNN(input_size=22, hidden_size=256, num_layers=5, nonlinearity='tanh', batch_first=True, dropout=0.6)
+        self.fc = nn.Linear(256, 4)
+    
+    def forward(self, x):
+        x = x[:, :, :600].squeeze(1).transpose(-1, -2)
+        x, hn = self.rnn(x)
+        x = hn[-1]
+        x = self.fc(x)
+        return x

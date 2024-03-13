@@ -8,5 +8,6 @@ parser.add_argument('--momentum', type=float, default=0.9, help='Momentum')
 parser.add_argument('--seed', type=int, default=3407, help='Random seed')
 parser.add_argument('--device', type=str, default='mps', help='Device to train on')
 parser.add_argument('--data_aug', type=bool, default=False, help='Whether to use data augmentation')
+parser.add_argument('--model', type=str, default=None, help='Model to use')
 
 FLAGS = parser.parse_args()

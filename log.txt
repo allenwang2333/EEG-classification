@@ -5,6 +5,8 @@ eegnet --epoch 60 --batch_size 16 StepLR(optimizer, step_size=10, gamma=0.3)
     train on all subject, test on subject 0: 
         Validation set: Average loss = 1.6913, Accuracy = 0.6730
         Test set: Average loss = 1.1563, Accuracy = 0.7000
+    train on all subject, test on all subject:
+        Test set: Average loss = 1.8112, Accuracy = 0.7043 
 
 
 MultiAttention --epoch 60 --batch_size 16 StepLR(optimizer, step_size=10, gamma=0.3) with noise augmentation

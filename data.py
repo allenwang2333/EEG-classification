@@ -42,16 +42,19 @@ class MyEEGDataset(Dataset):
     def __getitem__(self, idx):
         return self.X[idx], self.y[idx]
     
-def split_dataset(dataset, split=0.8, dataaug = False):
+def split_dataset(dataset, split=0.8):
     train_dataset, val_dataset = random_split(dataset, [split, 1-split])
-    if dataaug:
-        train_dataset = [[data_augmentation(x), y] for x, y in train_dataset]
     return train_dataset, val_dataset
 
-def data_augmentation(X):
-    #add noise
-    noise = 0.05 * torch.randn_like(X)
-    X = X + noise
-    #channel shuffle
-    X = X[:, torch.randperm(X.size(1))]
-    return X
+# def custom_collate_fn(batch):
+#     processed_batch = []
+
+#     for data, label in batch:
+#         # Noise Injection
+#         noise_level = np.random.uniform(0.001, 0.005)
+#         data += noise_level * np.random.normal(size=data.shape).astype(np.float32)
+                
+#         processed_batch.append((data, label))
+    
+#     # After processing, use the default collate function to handle the usual batching operations
+#     return torch.utils.data.dataloader.default_collate(processed_batch)

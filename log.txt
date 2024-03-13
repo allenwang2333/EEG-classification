@@ -1,4 +1,7 @@
 eegnet --epoch 60 --batch_size 16 StepLR(optimizer, step_size=10, gamma=0.3)
+    train on all subject, test on all subject:
+        Validation set: Average loss = 1.7868, Accuracy = 0.7038
+        Test set: Average loss = 1.8232, Accuracy = 0.7088
     train on subject 0, test on subject 0: 
         Validation set: Average loss = 1.6801, Accuracy = 0.6383
         Test set: Average loss = 2.5114, Accuracy = 0.6800
@@ -8,11 +11,32 @@ eegnet --epoch 60 --batch_size 16 StepLR(optimizer, step_size=10, gamma=0.3)
     train on all subject, test on all subject:
         Test set: Average loss = 1.8112, Accuracy = 0.7043 
 
-
-MultiAttention --epoch 60 --batch_size 16 StepLR(optimizer, step_size=10, gamma=0.3) with noise augmentation
+MultiAttention --epoch 90 --batch_size 128 StepLR(optimizer, step_size=30, gamma=0.5)
     train on all subject, test on all subject:
-        Validation set: Average loss = 1.1845, Accuracy = 0.5379
-        Test set: Average loss = 1.2123, Accuracy = 0.5034
+        Validation set: Average loss = 1.5773, Accuracy = 0.6540
+        Test set: Average loss = 1.9968, Accuracy = 0.6072
 
-        Validation set: Average loss = 1.2501, Accuracy = 0.5142
-        Test set: Average loss = 1.4517, Accuracy = 0.4605
+EEGLSTMNet --epoch 60 --batch_size 128 StepLR(optimizer, step_size=20, gamma=0.3)
+    train on all subject, test on all subject:
+        Validation set: Average loss = 1.2815, Accuracy = 0.6730
+        Test set: Average loss = 1.3752, Accuracy = 0.6433
+
+EEGAttentionNet --epoch 90 --batch_size 64 StepLR(optimizer, step_size=30, gamma=0.5)
+    train on all subject, test on all subject:
+        Validation set: Average loss = 1.3969, Accuracy = 0.6232
+        Test set: Average loss = 1.5471, Accuracy = 0.6117
+
+HybridCNNTransformerModel --epoch 60 --batch_size 128 StepLR(optimizer, step_size=20, gamma=0.5) not good
+    train on all subject, test on all subject:
+        Validation set: Average loss = 1.3922, Accuracy = 0.2607
+        Test set: Average loss = 1.3942, Accuracy = 0.2370
+
+HybridCNNLSTMModel --epoch 60 --batch_size 64 StepLR(optimizer, step_size=30, gamma=0.3)
+    train on all subject, test on all subject:
+        Validation set: Average loss = 1.2860, Accuracy = 0.4645
+        Test set: Average loss = 1.3656, Accuracy = 0.4266
+
+MiniResNet --epoch 30 --batch_size 128 StepLR(optimizer, step_size=30, gamma=0.3)
+    train on all subject, test on all subject:
+        Validation set: Average loss = 2.5310, Accuracy = 0.2583
+        Test set: Average loss = 2.3878, Accuracy = 0.2506

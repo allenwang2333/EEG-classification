@@ -10,7 +10,7 @@ eegattentionnet_accuracies = [0.6230, 0.5982, 0.6117, 0.5102, 0.3815]
 subjects = list(range(len(eegnet_accuracies)))
 
 # Plotting
-plt.figure(figsize=(5, 7))
+plt.figure(figsize=(8,6))
 plt.plot(subjects, eegnet_accuracies, label='EEGNet', marker='o')
 plt.plot(subjects, multi_attention_accuracies, label='MultiAttention', marker='o')
 plt.plot(subjects, eeglstmnet_accuracies, label='EEGLSTMNet', marker='o')
@@ -21,10 +21,10 @@ custom_labels = ['time 200', 'time 400', 'time 600', 'time 800', 'time 1000']
 plt.xticks(subjects, custom_labels)  # Applying custom labels with rotation for readability
 
 # Labeling
-plt.xlabel('Time bins')
-plt.ylabel('Test accuracy')
-plt.title('Test accuracy per model per time bin')
-plt.legend()
+plt.xlabel('Time bins', fontsize='large', fontweight='bold')
+plt.ylabel('Test accuracy', fontsize='large', fontweight='bold')
+plt.title('Test accuracy per model per time bin', fontsize='x-large', fontweight='bold')
+plt.legend(fontsize='medium', title_fontsize='large')
 
 # Show plot
 plt.show()

@@ -21,11 +21,11 @@ custom_labels = ['0', '1', '2', '3', '4', '5', '6', '7', '8', 'train on all\ntes
 plt.xticks(subjects, custom_labels)  # Applying custom labels with rotation for readability
 
 # Labeling
-plt.title('Test Accuracies vs Subject Number')
-plt.xlabel('Subject Number')
-plt.ylabel('Test Accuracy')
+plt.title('Test Accuracies vs Subject Number', fontsize='large', fontweight='bold')
+plt.xlabel('Subject Number', fontsize='large', fontweight='bold')
+plt.ylabel('Test Accuracy', fontsize='x-large', fontweight='bold')
 plt.xticks(subjects)
-plt.legend()
+plt.legend(fontsize='medium', title_fontsize='large')
 plt.grid(True)
 
 # Show plot

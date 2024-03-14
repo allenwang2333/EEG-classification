@@ -10,7 +10,7 @@ eegattentionnet_accuracies = [0.6117, 0.6163, 0.4740, 0.5711]
 subjects = list(range(len(eegnet_accuracies)))
 
 # Plotting
-plt.figure(figsize=(4, 7))
+plt.figure(figsize=(8, 6))
 plt.plot(subjects, eegnet_accuracies, label='EEGNet', marker='o')
 plt.plot(subjects, multi_attention_accuracies, label='MultiAttention', marker='o')
 plt.plot(subjects, eeglstmnet_accuracies, label='EEGLSTMNet', marker='o')
@@ -21,10 +21,10 @@ custom_labels = ['raw','guassian', 'channel_drop', 'guassian + channel_drop']
 plt.xticks(subjects, custom_labels)  # Applying custom labels with rotation for readability
 
 # Labeling
-plt.xlabel('Data Augmentation')
-plt.ylabel('Test Accuracy')
-plt.title('Test Accuracy vs Data Augmentation')
-plt.legend()
+plt.xlabel('Data Augmentation', fontsize='large', fontweight='bold')
+plt.ylabel('Test Accuracy', fontsize='large', fontweight='bold')
+plt.title('Test Accuracy vs Data Augmentation', fontsize='x-large', fontweight='bold')
+plt.legend(fontsize='medium', title_fontsize='large')
 
 # Show plot
 plt.show()

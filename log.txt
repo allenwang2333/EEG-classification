@@ -44,12 +44,12 @@ EEGLSTMNet --epoch 60 --batch_size 128 StepLR(optimizer, step_size=20, gamma=0.3
     train on all subject, test on all subject:
         Validation set: Average loss = 1.2815, Accuracy = 0.6730
         Test set: Average loss = 1.3752, Accuracy = 0.6433
-    train on 0, test on all:
-        Validation set: Average loss = 1.3574, Accuracy = 0.6383
-        Test set: Average loss = 4.1378, Accuracy = 0.3657
     train on all, test on 0:
         Validation set: Average loss = 1.4635, Accuracy = 0.6588
         Test set: Average loss = 2.1225, Accuracy = 0.5600
+    train on 0, test on all:
+        Validation set: Average loss = 1.3574, Accuracy = 0.6383
+        Test set: Average loss = 4.1378, Accuracy = 0.3657
 
     subject 0 val acc: 0.7021276595744681, test acc: 0.52, val loss: 1.9416208267211914, test loss: 2.3929812908172607
     subject 1 val acc: 0.44680851063829785, test acc: 0.28, val loss: 3.4438836574554443, test loss: 4.576418876647949

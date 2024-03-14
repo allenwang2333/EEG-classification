@@ -34,8 +34,7 @@ model = EEGNet()
 
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.3)
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.3)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20, gamma=0.3)
 _ , val_loss_history, train_acc_history, val_acc_history = train(model, train_loader, val_loader, criterion, optimizer, scheduler, FLAGS.epochs, FLAGS.device)
 
 if FLAGS.model is not None:

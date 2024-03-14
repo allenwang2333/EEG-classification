@@ -4,6 +4,25 @@ import torch
 
 # data shape is (B, 1, 22, 1000)
 
+class RNNModel(nn.Module):
+    def __init__(self):
+        super(RNNModel, self).__init__()
+        self.rnn = nn.RNN(input_size=22, hidden_size=256, num_layers=5, nonlinearity='tanh', batch_first=True, dropout=0.6)
+        self.fc = nn.Sequential(
+            nn.Linear(256, 128),
+            nn.ReLU(),
+            nn.Linear(128, 4)
+        )
+    
+    def forward(self, x):
+        # 128 x 1 x 22 x 1000
+        x = x[:, :, :600].squeeze(1).transpose(-1, -2)
+        # B x L x D
+        x, hn = self.rnn(x)
+        x = hn[-1]
+        x = self.fc(x)
+        return x
+
 class MiniResNet(nn.Module):
 
     def __init__(self, num_classes=4):
@@ -470,15 +489,3 @@ class EEGLSTMNet(nn.Module):
         x = self.fc2(x)
         return x
 
-class RNNModel(nn.Module):
-    def __init__(self):
-        super(RNNModel, self).__init__()
-        self.rnn = nn.RNN(input_size=22, hidden_size=256, num_layers=5, nonlinearity='tanh', batch_first=True, dropout=0.6)
-        self.fc = nn.Linear(256, 4)
-    
-    def forward(self, x):
-        x = x[:, :, :600].squeeze(1).transpose(-1, -2)
-        x, hn = self.rnn(x)
-        x = hn[-1]
-        x = self.fc(x)
-        return x

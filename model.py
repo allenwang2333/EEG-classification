@@ -322,14 +322,14 @@ class EEGAttentionNet(nn.Module):
         self.q = nn.Linear(960, 512)
         self.v = nn.Linear(960, 512)
         self.layer_norm = nn.LayerNorm(512)
-        self.fc1 = nn.Linear(4608, 512, bias=True)
+        self.fc1 = nn.Linear(7680, 512, bias=True)
         self.fc2 = nn.Linear(512, 512, bias=True)
         self.fc3 = nn.Linear(512, 4, bias=True)
         
 
 
     def forward(self, x):
-        x = x[:, :, :, 0:600]
+        x = x[:, :, :, 0:1000]
 
         x = self.firstconv(x)
         x = self.depthwiseConv(x)

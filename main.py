@@ -30,11 +30,11 @@ test_loader = DataLoader(test_dataset, batch_size=FLAGS.batch_size, shuffle=Fals
 # model = ResNet(num_classes=4)
 # model_list = [EEGNet() for _ in range(5)]
 # for model in model_list:
-model = EEGNet()
+model = EEGAttentionNet()
 
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.3)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
 _ , val_loss_history, train_acc_history, val_acc_history = train(model, train_loader, val_loader, criterion, optimizer, scheduler, FLAGS.epochs, FLAGS.device)
 
 if FLAGS.model is not None:

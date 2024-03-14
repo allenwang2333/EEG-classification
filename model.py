@@ -100,7 +100,7 @@ class ResidualBlock(nn.Module):
 
         return out
     
-# 100 epoch best
+
 class HybridCNNLSTMModel(nn.Module):
     def __init__(self):
         super(HybridCNNLSTMModel, self).__init__()

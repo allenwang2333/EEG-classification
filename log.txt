@@ -2,27 +2,85 @@ eegnet --epoch 60 --batch_size 16 StepLR(optimizer, step_size=10, gamma=0.3)
     train on all subject, test on all subject:
         Validation set: Average loss = 1.7868, Accuracy = 0.7038
         Test set: Average loss = 1.8232, Accuracy = 0.7088
-    train on subject 0, test on subject 0: 
-        Validation set: Average loss = 1.6801, Accuracy = 0.6383
-        Test set: Average loss = 2.5114, Accuracy = 0.6800
     train on all subject, test on subject 0: 
         Validation set: Average loss = 1.6913, Accuracy = 0.6730
         Test set: Average loss = 1.1563, Accuracy = 0.7000
+    train on subject 0, test on all subject:
+        Validation set: Average loss = 1.3289, Accuracy = 0.7660
+        Test set: Average loss = 5.4874, Accuracy = 0.4221
+
+    subject 0 val acc: 0.7659574468085106, test acc: 0.64, val loss: 1.3291890919208527, test loss: 1.9580525308847427
+    subject 1 val acc: 0.5531914893617021, test acc: 0.52, val loss: 2.0315650701522827, test loss: 3.054047405719757
+    subject 2 val acc: 0.7446808510638298, test acc: 0.8, val loss: 1.744246284166972, test loss: 1.0750564634799957
+    subject 3 val acc: 0.5434782608695652, test acc: 0.56, val loss: 2.0103056033452353, test loss: 2.404352068901062
+    subject 4 val acc: 0.8260869565217391, test acc: 0.7659574468085106, val loss: 0.6739863206942877, test loss: 1.4237420161565144
+    subject 5 val acc: 0.7021276595744681, test acc: 0.3877551020408163, val loss: 1.876403570175171, test loss: 4.295058786869049
+    subject 6 val acc: 0.723404255319149, test acc: 0.74, val loss: 1.5972271362940471, test loss: 0.818141832947731
+    subject 7 val acc: 0.8260869565217391, test acc: 0.72, val loss: 1.1272846659024556, test loss: 2.098621368408203
+    subject 8 val acc: 0.8043478260869565, test acc: 0.7659574468085106, val loss: 0.7197193304697672, test loss: 1.1809327602386475
 
 MultiAttention --epoch 90 --batch_size 128 StepLR(optimizer, step_size=30, gamma=0.5)
     train on all subject, test on all subject:
         Validation set: Average loss = 1.5773, Accuracy = 0.6540
         Test set: Average loss = 1.9968, Accuracy = 0.6072
+    train on all subject, test on subject 0: 
+        Validation set: Average loss = 2.0205, Accuracy = 0.6588
+        Test set: Average loss = 2.3252, Accuracy = 0.5400
+    train on subject 0, test on all subject:
+        Validation set: Average loss = 1.9786, Accuracy = 0.7234
+        Test set: Average loss = 8.8839, Accuracy = 0.3995
+
+    subject 0 val acc: 0.723404255319149, test acc: 0.58, val loss: 1.9789496660232544, test loss: 2.719966411590576
+    subject 1 val acc: 0.3404255319148936, test acc: 0.32, val loss: 3.9066414833068848, test loss: 4.8190155029296875
+    subject 2 val acc: 0.574468085106383, test acc: 0.76, val loss: 2.0023534297943115, test loss: 2.2849342823028564
+    subject 3 val acc: 0.4782608695652174, test acc: 0.5, val loss: 3.7536628246307373, test loss: 3.5212085247039795
+    subject 4 val acc: 0.5434782608695652, test acc: 0.5531914893617021, val loss: 2.471001386642456, test loss: 2.5875515937805176
+    subject 5 val acc: 0.425531914893617, test acc: 0.3469387755102041, val loss: 3.8841865062713623, test loss: 4.592630386352539
+    subject 6 val acc: 0.574468085106383, test acc: 0.6, val loss: 3.317213296890259, test loss: 3.657792568206787
+    subject 7 val acc: 0.6521739130434783, test acc: 0.62, val loss: 2.6735243797302246, test loss: 4.432739734649658
+    subject 8 val acc: 0.7608695652173914, test acc: 0.7021276595744681, val loss: 1.7392464876174927, test loss: 1.8687115907669067
 
 EEGLSTMNet --epoch 60 --batch_size 128 StepLR(optimizer, step_size=20, gamma=0.3)
     train on all subject, test on all subject:
         Validation set: Average loss = 1.2815, Accuracy = 0.6730
         Test set: Average loss = 1.3752, Accuracy = 0.6433
+    train on 0, test on all:
+        Validation set: Average loss = 1.3574, Accuracy = 0.6383
+        Test set: Average loss = 4.1378, Accuracy = 0.3657
+    train on all, test on 0:
+        Validation set: Average loss = 1.4635, Accuracy = 0.6588
+        Test set: Average loss = 2.1225, Accuracy = 0.5600
+
+    subject 0 val acc: 0.7021276595744681, test acc: 0.52, val loss: 1.9416208267211914, test loss: 2.3929812908172607
+    subject 1 val acc: 0.44680851063829785, test acc: 0.28, val loss: 3.4438836574554443, test loss: 4.576418876647949
+    subject 2 val acc: 0.6595744680851063, test acc: 0.66, val loss: 2.1791563034057617, test loss: 1.9747804403305054
+    subject 3 val acc: 0.5, test acc: 0.58, val loss: 2.469557762145996, test loss: 2.5987002849578857
+    subject 4 val acc: 0.6956521739130435, test acc: 0.5531914893617021, val loss: 2.3223555088043213, test loss: 2.556082248687744
+    subject 5 val acc: 0.3191489361702128, test acc: 0.3877551020408163, val loss: 4.23616886138916, test loss: 4.097573280334473
+    subject 6 val acc: 0.6170212765957447, test acc: 0.68, val loss: 2.6122002601623535, test loss: 2.2877559661865234
+    subject 7 val acc: 0.717391304347826, test acc: 0.7, val loss: 2.633993148803711, test loss: 2.769381046295166
+    subject 8 val acc: 0.6304347826086957, test acc: 0.6170212765957447, val loss: 2.342254877090454, test loss: 2.954141855239868
 
 EEGAttentionNet --epoch 90 --batch_size 64 StepLR(optimizer, step_size=30, gamma=0.5)
     train on all subject, test on all subject:
         Validation set: Average loss = 1.3969, Accuracy = 0.6232
         Test set: Average loss = 1.5471, Accuracy = 0.6117
+    train on all, test on 0:
+        Validation set: Average loss = 1.2047, Accuracy = 0.6872
+        Test set: Average loss = 1.6469, Accuracy = 0.6400
+    train on 0, test on all:
+        Validation set: Average loss = 1.4133, Accuracy = 0.6809
+        Test set: Average loss = 8.5129, Accuracy = 0.3409
+    
+    subject 0 val acc: 0.6382978723404256, test acc: 0.62, val loss: 2.159876585006714, test loss: 2.4592697620391846
+    subject 1 val acc: 0.44680851063829785, test acc: 0.36, val loss: 3.088303565979004, test loss: 3.2306594848632812
+    subject 2 val acc: 0.5957446808510638, test acc: 0.66, val loss: 1.923855185508728, test loss: 2.193147659301758
+    subject 3 val acc: 0.391304347826087, test acc: 0.4, val loss: 3.4144458770751953, test loss: 2.9645535945892334
+    subject 4 val acc: 0.6304347826086957, test acc: 0.5106382978723404, val loss: 2.412365674972534, test loss: 3.320675849914551
+    subject 5 val acc: 0.40425531914893614, test acc: 0.3673469387755102, val loss: 2.5942418575286865, test loss: 4.002053260803223
+    subject 6 val acc: 0.6595744680851063, test acc: 0.64, val loss: 2.1606550216674805, test loss: 1.7839295864105225
+    subject 7 val acc: 0.782608695652174, test acc: 0.54, val loss: 2.0933213233947754, test loss: 3.3203036785125732
+    subject 8 val acc: 0.7391304347826086, test acc: 0.6808510638297872, val loss: 1.7889078855514526, test loss: 2.451895236968994
 
 HybridCNNTransformerModel --epoch 60 --batch_size 128 StepLR(optimizer, step_size=20, gamma=0.5) not good
     train on all subject, test on all subject:

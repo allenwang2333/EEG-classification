@@ -12,7 +12,13 @@ import matplotlib.pyplot as plt
 torch.manual_seed(FLAGS.seed)
 np.random.seed(FLAGS.seed)
 
-train_val_dataset = MyEEGDataset(split='trainval', subject=0)
+augment = FLAGS.augment
+data_augment = {}
+if augment is not None:
+    for i in augment:
+        data_augment[i] = True
+
+train_val_dataset = MyEEGDataset(split='trainval', subject=-1, augment=data_augment)
 test_dataset = MyEEGDataset(split='test', subject=-1)
 
 train_dataset, val_dataset = split_dataset(train_val_dataset, split=0.8)
@@ -24,7 +30,7 @@ test_loader = DataLoader(test_dataset, batch_size=FLAGS.batch_size, shuffle=Fals
 # model = ResNet(num_classes=4)
 # model_list = [EEGNet() for _ in range(5)]
 # for model in model_list:
-model = EEGMultiAttentionNet()
+model = EEGNet()
 
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)

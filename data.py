@@ -3,7 +3,7 @@ import numpy as np
 import torch
 
 class MyEEGDataset(Dataset):
-    def __init__(self, root="data", split='trainval', subject=0):
+    def __init__(self, root="data", split='trainval', subject=0, augment=None):
         """
         set subject to -1 to load all data
         """
@@ -33,8 +33,15 @@ class MyEEGDataset(Dataset):
             else:
                 self.X = X_test
                 self.y = y_test
+
         self.X = torch.tensor(self.X, dtype=torch.float32).unsqueeze(1)
         self.y = torch.tensor(self.y, dtype=torch.long)
+        if augment is not None:
+            if 'gaussian' in augment:
+                self.X += torch.randn_like(self.X) * 0.01
+            if 'channel_drop' in augment:
+                random_index = torch.randint(0, 22, (1,)).item()
+                self.X[:, :, random_index, :] = 0
 
     def __len__(self):
         return len(self.y)

@@ -1,7 +1,7 @@
 eegnet --epoch 60 --batch_size 16 StepLR(optimizer, step_size=10, gamma=0.3)
     train on all subject, test on all subject:
-        Validation set: Average loss = 1.7868, Accuracy = 0.7038
-        Test set: Average loss = 1.8232, Accuracy = 0.7088
+        Validation set: Average loss = 1.7736, Accuracy = 0.6967
+        Test set: Average loss = 1.8481, Accuracy = 0.7133    
     train on all subject, test on subject 0: 
         Validation set: Average loss = 1.6913, Accuracy = 0.6730
         Test set: Average loss = 1.1563, Accuracy = 0.7000
@@ -18,6 +18,16 @@ eegnet --epoch 60 --batch_size 16 StepLR(optimizer, step_size=10, gamma=0.3)
     subject 6 val acc: 0.723404255319149, test acc: 0.74, val loss: 1.5972271362940471, test loss: 0.818141832947731
     subject 7 val acc: 0.8260869565217391, test acc: 0.72, val loss: 1.1272846659024556, test loss: 2.098621368408203
     subject 8 val acc: 0.8043478260869565, test acc: 0.7659574468085106, val loss: 0.7197193304697672, test loss: 1.1809327602386475
+
+    noise:
+        Validation set: Average loss = 1.8467, Accuracy = 0.6801
+        Test set: Average loss = 1.7901, Accuracy = 0.6840
+    channel_drop:
+        Validation set: Average loss = 1.8557, Accuracy = 0.6611
+        Test set: Average loss = 2.3328, Accuracy = 0.6321
+    both:
+        Validation set: Average loss = 1.6808, Accuracy = 0.6706
+        Test set: Average loss = 2.0555, Accuracy = 0.6795
 
 MultiAttention --epoch 90 --batch_size 128 StepLR(optimizer, step_size=30, gamma=0.5)
     train on all subject, test on all subject:

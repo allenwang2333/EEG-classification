@@ -12,7 +12,7 @@ subjects = list(range(len(eegnet_accuracies)))
 # Plotting
 plt.figure(figsize=(8, 6))
 plt.plot(subjects, eegnet_accuracies, label='EEGNet', marker='o')
-plt.plot(subjects, multi_attention_accuracies, label='MultiAttention', marker='o')
+plt.plot(subjects, multi_attention_accuracies, label='EEGMultiAttentionNet', marker='o')
 plt.plot(subjects, eeglstmnet_accuracies, label='EEGLSTMNet', marker='o')
 #plt.plot(subjects, eegattentionnet_accuracies, label='EEGAttentionNet', marker='o')
 
